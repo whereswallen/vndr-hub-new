@@ -1,0 +1,1275 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VNDR Hub App Design</title>
+  <style>
+    :root {
+      --bg: #f7faf9;
+      --surface: #ffffff;
+      --surface-2: #edf4f2;
+      --ink: #10201f;
+      --muted: #60716f;
+      --line: #d7e4e1;
+      --primary: #087f7a;
+      --primary-ink: #ffffff;
+      --primary-soft: #d9f2ef;
+      --success: #168a52;
+      --warning: #b87908;
+      --danger: #c54135;
+      --info: #286bb7;
+      --shadow: 0 18px 50px rgba(16, 32, 31, .10);
+      --radius: 8px;
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0d1514;
+      --surface: #14211f;
+      --surface-2: #1b2d2a;
+      --ink: #edf7f5;
+      --muted: #9bb1ad;
+      --line: #2b4541;
+      --primary: #28b8ad;
+      --primary-ink: #061211;
+      --primary-soft: #123c39;
+      --success: #45c684;
+      --warning: #e3aa36;
+      --danger: #f06b5f;
+      --info: #74aef2;
+      --shadow: 0 18px 50px rgba(0, 0, 0, .28);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: var(--font);
+      letter-spacing: 0;
+    }
+
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+
+    .app-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 22px 18px;
+      background: var(--surface);
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 44px;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: var(--primary);
+      color: var(--primary-ink);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+    }
+
+    .brand strong { display: block; font-size: 18px; }
+    .brand span { display: block; color: var(--muted); font-size: 12px; }
+
+    .nav {
+      display: grid;
+      gap: 6px;
+    }
+
+    .nav button {
+      min-height: 40px;
+      border: 0;
+      border-radius: 8px;
+      padding: 0 12px;
+      text-align: left;
+      background: transparent;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav button.active {
+      color: var(--ink);
+      background: var(--primary-soft);
+      font-weight: 700;
+    }
+
+    .nav svg { width: 18px; height: 18px; stroke-width: 2; flex: 0 0 auto; }
+
+    .side-footer {
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      display: grid;
+      gap: 12px;
+    }
+
+    .processor {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface-2);
+      display: grid;
+      gap: 5px;
+      font-size: 13px;
+    }
+
+    .processor strong { display: flex; align-items: center; justify-content: space-between; }
+
+    .main {
+      min-width: 0;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      min-height: 72px;
+      padding: 14px 28px;
+      border-bottom: 1px solid var(--line);
+      background: color-mix(in srgb, var(--bg) 86%, transparent);
+      backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .title h1 { margin: 0; font-size: 24px; line-height: 1.15; }
+    .title p { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .content { padding: 28px; }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .btn {
+      min-height: 38px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      padding: 0 14px;
+      color: var(--ink);
+      background: var(--surface);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .btn.primary {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: var(--primary-ink);
+    }
+
+    .btn.danger {
+      border-color: color-mix(in srgb, var(--danger) 45%, var(--line));
+      color: var(--danger);
+    }
+
+    .btn.icon {
+      width: 38px;
+      padding: 0;
+    }
+
+    .toggle {
+      width: 38px;
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--ink);
+      display: grid;
+      place-items: center;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .card.pad { padding: 18px; }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .metric {
+      margin-top: 10px;
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .money, .mono {
+      font-family: var(--mono);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(320px, .65fr);
+      gap: 18px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .section-head {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .section-head h2 { margin: 0; font-size: 17px; }
+    .section-head p { margin: 3px 0 0; color: var(--muted); font-size: 13px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      background: color-mix(in srgb, var(--surface-2) 70%, transparent);
+    }
+
+    td.amount, th.amount { text-align: right; }
+    tbody tr:hover { background: color-mix(in srgb, var(--primary-soft) 45%, transparent); }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 24px;
+      padding: 0 9px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .badge.success { color: var(--success); background: color-mix(in srgb, var(--success) 12%, transparent); border-color: color-mix(in srgb, var(--success) 35%, var(--line)); }
+    .badge.warning { color: var(--warning); background: color-mix(in srgb, var(--warning) 12%, transparent); border-color: color-mix(in srgb, var(--warning) 35%, var(--line)); }
+    .badge.danger { color: var(--danger); background: color-mix(in srgb, var(--danger) 12%, transparent); border-color: color-mix(in srgb, var(--danger) 35%, var(--line)); }
+    .badge.info { color: var(--info); background: color-mix(in srgb, var(--info) 12%, transparent); border-color: color-mix(in srgb, var(--info) 35%, var(--line)); }
+
+    .field {
+      display: grid;
+      gap: 7px;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .input, select {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 12px;
+      background: var(--surface);
+      color: var(--ink);
+      outline: none;
+    }
+
+    .input:focus, select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent);
+    }
+
+    .state-switcher {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+    }
+
+    .state-switcher button {
+      min-height: 30px;
+      border: 0;
+      border-radius: 6px;
+      padding: 0 10px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .state-switcher button.active {
+      background: var(--primary-soft);
+      color: var(--ink);
+    }
+
+    .state-panel { display: none; }
+    .state-panel.active { display: block; }
+
+    .quiet-state {
+      min-height: 280px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 38px;
+    }
+
+    .quiet-state svg { width: 44px; height: 44px; color: var(--primary); margin-bottom: 14px; }
+    .quiet-state h3 { margin: 0 0 8px; }
+    .quiet-state p { margin: 0; color: var(--muted); max-width: 360px; }
+
+    .skeleton {
+      height: 14px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--surface-2), color-mix(in srgb, var(--line) 55%, var(--surface)), var(--surface-2));
+      background-size: 220% 100%;
+      animation: shimmer 1.5s infinite linear;
+    }
+
+    @keyframes shimmer {
+      from { background-position: 120% 0; }
+      to { background-position: -120% 0; }
+    }
+
+    .chart {
+      height: 285px;
+      padding: 18px;
+    }
+
+    .chart svg { width: 100%; height: 100%; }
+    .chart-grid { stroke: var(--line); stroke-width: 1; }
+    .chart-line { fill: none; stroke: var(--primary); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+    .chart-fill { fill: color-mix(in srgb, var(--primary) 14%, transparent); }
+
+    .list {
+      display: grid;
+      gap: 10px;
+      padding: 16px;
+    }
+
+    .list-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+    }
+
+    .list-row strong { display: block; }
+    .list-row span { display: block; color: var(--muted); font-size: 13px; margin-top: 3px; }
+
+    .vendor-profile {
+      display: grid;
+      gap: 16px;
+    }
+
+    .avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 8px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-size: 20px;
+    }
+
+    .detail-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+    }
+
+    .detail-row strong { color: var(--ink); text-align: right; }
+
+    .label-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 390px;
+      gap: 18px;
+    }
+
+    .print-sheet {
+      background: #fff;
+      color: #111;
+      border: 1px solid #cfd8d5;
+      border-radius: 8px;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      align-content: start;
+    }
+
+    .price-tag {
+      min-height: 112px;
+      border: 1px dashed #98a6a3;
+      border-radius: 6px;
+      padding: 10px;
+      display: grid;
+      gap: 5px;
+      align-content: start;
+      background: #fff;
+    }
+
+    .price-tag .shop { font-size: 11px; font-weight: 800; text-transform: uppercase; }
+    .price-tag .item { font-size: 13px; font-weight: 700; }
+    .barcode {
+      height: 28px;
+      background: repeating-linear-gradient(90deg, #111 0 2px, transparent 2px 5px, #111 5px 6px, transparent 6px 10px);
+    }
+
+    .pos-wrap {
+      min-height: calc(100vh - 128px);
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) 430px;
+      gap: 18px;
+    }
+
+    .scan-bar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .scan-bar input {
+      min-height: 58px;
+      font-size: 19px;
+      padding: 0 18px;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .product-tile {
+      min-height: 126px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: var(--surface);
+      display: grid;
+      align-content: space-between;
+      gap: 12px;
+    }
+
+    .product-tile strong { font-size: 15px; }
+    .product-tile span { color: var(--muted); font-size: 13px; }
+
+    .cart {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      overflow: hidden;
+    }
+
+    .cart-body {
+      padding: 16px;
+      overflow: auto;
+      display: grid;
+      align-content: start;
+      gap: 16px;
+    }
+
+    .vendor-group h3 {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .cart-line {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface-2);
+    }
+
+    .totals {
+      padding: 16px;
+      border-top: 1px solid var(--line);
+      display: grid;
+      gap: 10px;
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+    }
+
+    .total-row.final {
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      color: var(--ink);
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .pay-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .pay-buttons .btn { min-height: 58px; }
+
+    .receipt {
+      margin-top: 18px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      max-width: 370px;
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    .receipt h3 { margin: 0 0 6px; font-family: var(--font); }
+    .receipt .rline { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dotted var(--line); }
+
+    .mobile-frame {
+      width: min(390px, 100%);
+      margin: 0 auto;
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .phone-screen {
+      min-height: 740px;
+      border-radius: 22px;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .phone-content { padding: 18px; display: grid; gap: 14px; }
+    .phone-hero {
+      padding: 22px 18px;
+      border-radius: 8px;
+      background: var(--primary);
+      color: var(--primary-ink);
+    }
+
+    .phone-hero span { opacity: .82; font-size: 13px; font-weight: 700; }
+    .phone-hero strong { display: block; margin-top: 10px; font-size: 44px; line-height: 1; }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .mini-stat {
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+    }
+
+    .mini-stat span { display: block; color: var(--muted); font-size: 11px; }
+    .mini-stat strong { display: block; margin-top: 5px; font-size: 13px; }
+
+    .sale-card {
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+    }
+
+    .statement-summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding: 18px;
+    }
+
+    .statement-hero {
+      grid-column: 1 / -1;
+      padding: 22px;
+      border-radius: 8px;
+      background: var(--primary-soft);
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .statement-hero strong { font-size: 38px; }
+
+    .calc-row {
+      padding: 13px 0;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .wizard {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .step {
+      min-height: 58px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: var(--surface);
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .step.active {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+      color: var(--ink);
+      font-weight: 800;
+    }
+
+    .wizard-body {
+      display: grid;
+      grid-template-columns: 1fr 310px;
+      gap: 18px;
+    }
+
+    .payment-choice {
+      display: grid;
+      gap: 12px;
+      padding: 18px;
+    }
+
+    .choice {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .choice.primary-choice {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .tokens {
+      display: grid;
+      gap: 18px;
+    }
+
+    .swatches {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .swatch {
+      min-height: 102px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--surface);
+    }
+
+    .swatch-color { height: 54px; }
+    .swatch-info { padding: 10px; font-size: 12px; }
+    .swatch-info strong { display: block; }
+    .swatch-info span { color: var(--muted); font-family: var(--mono); }
+
+    .typescale {
+      display: grid;
+      gap: 14px;
+      padding: 18px;
+    }
+
+    .typescale .hxl { font-size: 42px; line-height: 1; font-weight: 900; }
+    .typescale .h2 { font-size: 24px; font-weight: 800; }
+    .typescale .body { color: var(--muted); max-width: 620px; }
+
+    @media (max-width: 1100px) {
+      .app-shell { grid-template-columns: 1fr; }
+      .sidebar {
+        position: static;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .nav { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .side-footer { display: none; }
+      .kpi-grid, .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid-2, .label-layout, .pos-wrap, .wizard-body { grid-template-columns: 1fr; }
+      .cart { min-height: 600px; }
+    }
+
+    @media (max-width: 720px) {
+      .topbar { align-items: stretch; flex-direction: column; padding: 16px; }
+      .content { padding: 16px; }
+      .nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .kpi-grid, .grid-3, .statement-summary, .product-grid, .swatches, .steps { grid-template-columns: 1fr; }
+      .section-head, .statement-hero { align-items: flex-start; flex-direction: column; }
+      th:nth-child(n+4), td:nth-child(n+4) { display: none; }
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">VH</div>
+        <div>
+          <strong>VNDR Hub</strong>
+          <span>Canadian multi-vendor POS</span>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Prototype screens">
+        <button class="active" data-screen="dashboard">Dashboard</button>
+        <button data-screen="vendors">Vendors</button>
+        <button data-screen="inventory">Inventory</button>
+        <button data-screen="pos">POS</button>
+        <button data-screen="portal">Portal</button>
+        <button data-screen="settlements">Settlements</button>
+        <button data-screen="onboarding">Onboarding</button>
+        <button data-screen="styleguide">Style Guide</button>
+      </nav>
+
+      <div class="side-footer">
+        <div class="processor">
+          <strong>Payment provider <span class="badge success">Square</span></strong>
+          <span>Processor-agnostic design. Square and Stripe share the same checkout surface.</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="title">
+          <h1 id="screen-title">Operator Dashboard</h1>
+          <p id="screen-subtitle">Business health, sales, tax, rent, and vendor activity at a glance.</p>
+        </div>
+        <div class="top-actions">
+          <div class="state-switcher" aria-label="State selector">
+            <button class="active" data-state="normal">Normal</button>
+            <button data-state="loading">Loading</button>
+            <button data-state="empty">Empty</button>
+            <button data-state="error">Error</button>
+          </div>
+          <button class="toggle" id="theme-toggle" title="Toggle theme">◐</button>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="screen active" data-name="dashboard" data-title="Operator Dashboard" data-subtitle="Business health, sales, tax, rent, and vendor activity at a glance.">
+          <div class="state-panel active" data-panel="normal">
+            <div class="kpi-grid">
+              <div class="card pad"><div class="metric-label">Today's Sales <span class="badge success">Live</span></div><div class="metric money">$3,240.00</div></div>
+              <div class="card pad"><div class="metric-label">Active Vendors</div><div class="metric">42</div></div>
+              <div class="card pad"><div class="metric-label">Commission Owed</div><div class="metric money">$1,180.00</div></div>
+              <div class="card pad"><div class="metric-label">Tax Collected</div><div class="metric money">$421.00</div></div>
+            </div>
+            <div class="grid-2">
+              <div class="card">
+                <div class="section-head"><div><h2>Sales over time</h2><p>Rolling 14-day view, all locations.</p></div><button class="btn">Export</button></div>
+                <div class="chart">
+                  <svg viewBox="0 0 680 260" role="img" aria-label="Line chart">
+                    <line class="chart-grid" x1="20" y1="210" x2="660" y2="210"></line>
+                    <line class="chart-grid" x1="20" y1="150" x2="660" y2="150"></line>
+                    <line class="chart-grid" x1="20" y1="90" x2="660" y2="90"></line>
+                    <path class="chart-fill" d="M20,190 C80,160 108,166 145,130 C190,86 229,142 270,112 C320,75 346,122 390,94 C430,67 470,72 510,52 C560,26 600,66 660,38 L660,230 L20,230 Z"></path>
+                    <path class="chart-line" d="M20,190 C80,160 108,166 145,130 C190,86 229,142 270,112 C320,75 346,122 390,94 C430,67 470,72 510,52 C560,26 600,66 660,38"></path>
+                  </svg>
+                </div>
+              </div>
+              <div class="card">
+                <div class="section-head"><div><h2>Top vendors</h2><p>Month-to-date net sales.</p></div></div>
+                <div class="list">
+                  <div class="list-row"><div><strong>Prairie Relics</strong><span>Booth B-22</span></div><strong class="money">$4,820.00</strong></div>
+                  <div class="list-row"><div><strong>North Star Finds</strong><span>Booth A-04</span></div><strong class="money">$3,940.00</strong></div>
+                  <div class="list-row"><div><strong>Juniper Goods</strong><span>Booth C-11</span></div><strong class="money">$2,615.00</strong></div>
+                </div>
+              </div>
+            </div>
+            <div class="card" style="margin-top:18px">
+              <div class="section-head"><div><h2>Low stock alerts</h2><p>Items that need attention before the weekend rush.</p></div></div>
+              <table>
+                <thead><tr><th>SKU</th><th>Item</th><th>Vendor</th><th class="amount">Qty</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td class="mono">NS-1187</td><td>Pressed Glass Bowl</td><td>North Star Finds</td><td class="amount mono">1</td><td><span class="badge warning">Low</span></td></tr>
+                  <tr><td class="mono">JG-0412</td><td>Wool Blanket</td><td>Juniper Goods</td><td class="amount mono">0</td><td><span class="badge danger">Out</span></td></tr>
+                  <tr><td class="mono">PR-0142</td><td>Vintage Brass Lamp</td><td>Prairie Relics</td><td class="amount mono">3</td><td><span class="badge warning">Low</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="state-panel" data-panel="loading"></div>
+          <div class="state-panel" data-panel="empty"></div>
+          <div class="state-panel" data-panel="error"></div>
+        </section>
+
+        <section class="screen" data-name="vendors" data-title="Vendors & Booths" data-subtitle="Browse dealers, assign booths, and inspect commission and rent details.">
+          <div class="state-panel active" data-panel="normal">
+            <div class="grid-2">
+              <div class="card">
+                <div class="section-head"><div><h2>Vendors</h2><p>Active and inactive dealers across all booths.</p></div><button class="btn primary">Add vendor</button></div>
+                <table>
+                  <thead><tr><th>Vendor Code</th><th>Display Name</th><th>Booth</th><th>Commission</th><th>Status</th><th class="amount">This Month</th></tr></thead>
+                  <tbody>
+                    <tr><td class="mono">V-014</td><td>Prairie Relics</td><td>B-22</td><td>10%</td><td><span class="badge success">Active</span></td><td class="amount money">$1,240.00</td></tr>
+                    <tr><td class="mono">V-021</td><td>North Star Finds</td><td>A-04</td><td>12%</td><td><span class="badge success">Active</span></td><td class="amount money">$980.00</td></tr>
+                    <tr><td class="mono">V-033</td><td>Juniper Goods</td><td>C-11</td><td>10%</td><td><span class="badge warning">Pending</span></td><td class="amount money">$460.00</td></tr>
+                    <tr><td class="mono">V-039</td><td>Copper Lane Vintage</td><td>-</td><td>15%</td><td><span class="badge danger">Inactive</span></td><td class="amount money">$0.00</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <aside class="card pad vendor-profile">
+                <div style="display:flex; gap:14px; align-items:center">
+                  <div class="avatar">PR</div>
+                  <div><h2 style="margin:0">Prairie Relics</h2><p style="margin:4px 0 0;color:var(--muted)">Selected vendor</p></div>
+                </div>
+                <div class="detail-list">
+                  <div class="detail-row"><span>Email</span><strong>hello@prairierelics.ca</strong></div>
+                  <div class="detail-row"><span>Phone</span><strong>(306) 555-0194</strong></div>
+                  <div class="detail-row"><span>Payment method</span><strong>Interac e-Transfer</strong></div>
+                  <div class="detail-row"><span>Monthly booth rent</span><strong class="money">$85.00</strong></div>
+                  <div class="detail-row"><span>Commission rate</span><strong>10%</strong></div>
+                </div>
+                <button class="btn primary">Edit vendor</button>
+              </aside>
+            </div>
+          </div>
+          <div class="state-panel" data-panel="loading"></div>
+          <div class="state-panel" data-panel="empty"></div>
+          <div class="state-panel" data-panel="error"></div>
+        </section>
+
+        <section class="screen" data-name="inventory" data-title="Inventory & Label Printing" data-subtitle="Vendor inventory management with at-home barcode price tags.">
+          <div class="state-panel active" data-panel="normal">
+            <div class="label-layout">
+              <div class="card">
+                <div class="section-head"><div><h2>Inventory</h2><p>Batch-edit quantities and print labels from home.</p></div><button class="btn primary">Print selected</button></div>
+                <table>
+                  <thead><tr><th>SKU</th><th>Item Name</th><th class="amount">Price</th><th class="amount">Qty</th><th>Category</th></tr></thead>
+                  <tbody>
+                    <tr><td class="mono">PR-0142</td><td>Vintage Brass Lamp</td><td class="amount money">$45.00</td><td class="amount mono">3</td><td>Lighting</td></tr>
+                    <tr><td class="mono">PR-0143</td><td>Oak Side Table</td><td class="amount money">$120.00</td><td class="amount mono">1</td><td>Furniture</td></tr>
+                    <tr><td class="mono">PR-0144</td><td>Blue Stoneware Jug</td><td class="amount money">$38.00</td><td class="amount mono">6</td><td>Ceramics</td></tr>
+                    <tr><td class="mono">PR-0145</td><td>Brass Candle Pair</td><td class="amount money">$28.00</td><td class="amount mono">4</td><td>Decor</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <aside>
+                <div class="section-head" style="padding-left:0;padding-right:0;border-bottom:0"><div><h2>Print preview</h2><p>Avery/Dymo/Zebra-ready white label sheet.</p></div></div>
+                <div class="print-sheet">
+                  <div class="price-tag"><div class="shop">Prairie Relics</div><div class="item">Vintage Brass Lamp</div><strong class="money">$45.00</strong><div class="barcode"></div><small class="mono">PR-0142</small></div>
+                  <div class="price-tag"><div class="shop">Prairie Relics</div><div class="item">Oak Side Table</div><strong class="money">$120.00</strong><div class="barcode"></div><small class="mono">PR-0143</small></div>
+                  <div class="price-tag"><div class="shop">Prairie Relics</div><div class="item">Blue Stoneware Jug</div><strong class="money">$38.00</strong><div class="barcode"></div><small class="mono">PR-0144</small></div>
+                  <div class="price-tag"><div class="shop">Prairie Relics</div><div class="item">Brass Candle Pair</div><strong class="money">$28.00</strong><div class="barcode"></div><small class="mono">PR-0145</small></div>
+                </div>
+              </aside>
+            </div>
+          </div>
+          <div class="state-panel" data-panel="loading"></div>
+          <div class="state-panel" data-panel="empty"></div>
+          <div class="state-panel" data-panel="error"></div>
+        </section>
+
+        <section class="screen" data-name="pos" data-title="POS Terminal" data-subtitle="Fast checkout with vendor grouping, Canadian tax breakdowns, and processor-neutral tendering.">
+          <div class="state-panel active" data-panel="normal">
+            <div class="pos-wrap">
+              <div>
+                <div class="scan-bar">
+                  <input class="input mono" value="" placeholder="Scan barcode or search inventory">
+                  <button class="btn primary">Add item</button>
+                </div>
+                <div class="product-grid">
+                  <button class="product-tile"><strong>Vintage Brass Lamp</strong><span>Prairie Relics</span><span class="money">$45.00</span></button>
+                  <button class="product-tile"><strong>Pressed Glass Bowl</strong><span>North Star Finds</span><span class="money">$32.00</span></button>
+                  <button class="product-tile"><strong>Wool Blanket</strong><span>Juniper Goods</span><span class="money">$75.00</span></button>
+                  <button class="product-tile"><strong>Oak Side Table</strong><span>Prairie Relics</span><span class="money">$120.00</span></button>
+                  <button class="product-tile"><strong>Stoneware Jug</strong><span>Prairie Relics</span><span class="money">$38.00</span></button>
+                  <button class="product-tile"><strong>Brass Candle Pair</strong><span>Prairie Relics</span><span class="money">$28.00</span></button>
+                </div>
+                <div class="receipt">
+                  <h3>Receipt preview</h3>
+                  <div>VNDR Demo Mall</div>
+                  <div>GST/HST # 73421 8821 RT0001</div>
+                  <div class="rline"><span>Vintage Brass Lamp</span><span>$45.00</span></div>
+                  <div class="rline"><span>Pressed Glass Bowl</span><span>$32.00</span></div>
+                  <div class="rline"><span>Wool Blanket</span><span>$43.00</span></div>
+                  <div class="rline"><span>GST 5%</span><span>$6.00</span></div>
+                  <div class="rline"><span>PST 7%</span><span>$8.40</span></div>
+                  <div class="rline"><strong>Total</strong><strong>$134.40</strong></div>
+                </div>
+              </div>
+              <aside class="card cart">
+                <div class="section-head"><div><h2>Cart</h2><p>BC location - GST + PST shown separately.</p></div><span class="badge info">Square</span></div>
+                <div class="cart-body">
+                  <div class="vendor-group">
+                    <h3>Prairie Relics</h3>
+                    <div class="cart-line"><div><strong>Vintage Brass Lamp</strong><span>Qty 1</span></div><strong class="money">$45.00</strong></div>
+                  </div>
+                  <div class="vendor-group">
+                    <h3>North Star Finds</h3>
+                    <div class="cart-line"><div><strong>Pressed Glass Bowl</strong><span>Qty 1</span></div><strong class="money">$32.00</strong></div>
+                  </div>
+                  <div class="vendor-group">
+                    <h3>Juniper Goods</h3>
+                    <div class="cart-line"><div><strong>Wool Blanket</strong><span>Qty 1</span></div><strong class="money">$43.00</strong></div>
+                  </div>
+                </div>
+                <div class="totals">
+                  <div class="total-row"><span>Subtotal</span><strong class="money">$120.00</strong></div>
+                  <div class="total-row"><span>GST (5%)</span><strong class="money">$6.00</strong></div>
+                  <div class="total-row"><span>PST (7%)</span><strong class="money">$8.40</strong></div>
+                  <div class="total-row final"><span>Total</span><strong class="money">$134.40</strong></div>
+                  <div class="pay-buttons">
+                    <button class="btn">Cash</button>
+                    <button class="btn primary">Card / Interac</button>
+                    <button class="btn">Split</button>
+                  </div>
+                </div>
+              </aside>
+            </div>
+          </div>
+          <div class="state-panel" data-panel="loading"></div>
+          <div class="state-panel" data-panel="empty"></div>
+          <div class="state-panel" data-panel="error"></div>
+        </section>
+
+        <section class="screen" data-name="portal" data-title="Vendor Portal Mobile" data-subtitle="Phone-first live sales view for dealers.">
+          <div class="state-panel active" data-panel="normal">
+            <div class="mobile-frame">
+              <div class="phone-screen">
+                <div class="phone-content">
+                  <div style="display:flex;justify-content:space-between;align-items:center"><strong>Prairie Relics</strong><span class="badge success">Live</span></div>
+                  <div class="phone-hero"><span>Today's net earnings</span><strong class="money">$318.40</strong></div>
+                  <div class="stat-row">
+                    <div class="mini-stat"><span>Today</span><strong class="money">$318.40</strong></div>
+                    <div class="mini-stat"><span>This Week</span><strong class="money">$1,148.20</strong></div>
+                    <div class="mini-stat"><span>This Month</span><strong class="money">$4,820.00</strong></div>
+                  </div>
+                  <h2 style="font-size:17px;margin:8px 0 0">Live sales feed</h2>
+                  <div class="sale-card"><div><strong>Vintage Brass Lamp</strong><span>2:14 PM</span></div><strong class="money">$45.00</strong></div>
+                  <div class="sale-card"><div><strong>Blue Stoneware Jug</strong><span>1:42 PM</span></div><strong class="money">$38.00</strong></div>
+                  <div class="sale-card"><div><strong>Brass Candle Pair</strong><span>12:58 PM</span></div><strong class="money">$28.00</strong></div>
+                  <div class="sale-card"><div><strong>Oak Side Table</strong><span>11:36 AM</span></div><strong class="money">$120.00</strong></div>
+                  <div class="sale-card"><div><strong>Framed Prairie Print</strong><span>10:19 AM</span></div><strong class="money">$52.00</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="state-panel" data-panel="loading"></div>
+          <div class="state-panel" data-panel="empty"></div>
+          <div class="state-panel" data-panel="error"></div>
+        </section>
+
+        <section class="screen" data-name="settlements" data-title="Settlements & Payouts" data-subtitle="Clear vendor statements with gross, commission, rent, fees, and net payout.">
+          <div class="state-panel active" data-panel="normal">
+            <div class="grid-2">
+              <div class="card">
+                <div class="section-head"><div><h2>Prairie Relics statement</h2><p>June 1-30, 2026</p></div><span class="badge warning">Pending</span></div>
+                <div class="statement-summary">
+                  <div class="statement-hero"><div><span>Net payout</span><strong class="money">$2,013.00</strong></div><button class="btn primary">Send payout</button></div>
+                  <div>
+                    <div class="calc-row"><span>Gross Sales</span><strong class="money">$2,400.00</strong></div>
+                    <div class="calc-row"><span>Commission</span><strong class="money">-$240.00</strong></div>
+                    <div class="calc-row"><span>Booth Rent</span><strong class="money">-$85.00</strong></div>
+                    <div class="calc-row"><span>Processing Fees</span><strong class="money">-$62.00</strong></div>
+                  </div>
+                  <div class="card pad" style="box-shadow:none">
+                    <div class="metric-label">Payout method</div>
+                    <div class="metric" style="font-size:22px">Interac e-Transfer</div>
+                    <p style="color:var(--muted);margin-bottom:0">EFT export is available for weekly batch payments.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="section-head"><div><h2>Statement sales</h2><p>Line items included in gross.</p></div></div>
+                <div class="list">
+                  <div class="list-row"><div><strong>Vintage Brass Lamp</strong><span>June 28, 2:14 PM</span></div><strong class="money">$45.00</strong></div>
+                  <div class="list-row"><div><strong>Oak Side Table</strong><span>June 27, 11:36 AM</span></div><strong class="money">$120.00</strong></div>
+                  <div class="list-row"><div><strong>Blue Stoneware Jug</strong><span>June 25, 1:42 PM</span></div><strong class="money">$38.00</strong></div>
+                  <div class="list-row"><div><strong>Framed Prairie Print</strong><span>June 24, 10:19 AM</span></div><strong class="money">$52.00</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="state-panel" data-panel="loading"></div>
+          <div class="state-panel" data-panel="empty"></div>
+          <div class="state-panel" data-panel="error"></div>
+        </section>
+
+        <section class="screen" data-name="onboarding" data-title="Onboarding Wizard" data-subtitle="Guided setup for a new shop, with Canadian tax and existing Square accounts first.">
+          <div class="state-panel active" data-panel="normal">
+            <div class="wizard">
+              <div class="steps">
+                <div class="step">1. Shop info</div>
+                <div class="step active">2. Province & tax</div>
+                <div class="step">3. Connect payments</div>
+                <div class="step">4. Add vendors</div>
+                <div class="step">5. First product</div>
+              </div>
+              <div class="wizard-body">
+                <div class="card pad">
+                  <h2 style="margin-top:0">Set your province and tax</h2>
+                  <p style="color:var(--muted)">VNDR Hub uses your location province to calculate GST/HST/PST/QST on every receipt.</p>
+                  <div class="grid-3">
+                    <label class="field">Province<select><option>Ontario</option><option>British Columbia</option><option>Quebec</option></select></label>
+                    <label class="field">Tax component<input class="input" value="HST" readonly></label>
+                    <label class="field">Rate<input class="input mono" value="13.000%" readonly></label>
+                  </div>
+                  <div class="card pad" style="box-shadow:none;margin-top:16px;background:var(--surface-2)">
+                    <strong>Ontario receipt preview</strong>
+                    <div class="detail-row"><span>Subtotal</span><strong class="money">$100.00</strong></div>
+                    <div class="detail-row"><span>HST (13%)</span><strong class="money">$13.00</strong></div>
+                    <div class="detail-row"><span>Total</span><strong class="money">$113.00</strong></div>
+                  </div>
+                </div>
+                <aside class="card payment-choice">
+                  <h2 style="margin:0">Connect payments</h2>
+                  <p style="color:var(--muted);margin:0">Most shops can keep the Square account they already use.</p>
+                  <div class="choice primary-choice"><strong>Square</strong><span>Use your existing Square merchant account and terminal.</span><button class="btn primary">Connect your Square account</button></div>
+                  <div class="choice"><strong>Stripe</strong><span>Use Stripe Terminal if you do not already have Square.</span><button class="btn">Use Stripe instead</button></div>
+                </aside>
+              </div>
+            </div>
+          </div>
+          <div class="state-panel" data-panel="loading"></div>
+          <div class="state-panel" data-panel="empty"></div>
+          <div class="state-panel" data-panel="error"></div>
+        </section>
+
+        <section class="screen" data-name="styleguide" data-title="Style Guide" data-subtitle="The design tokens used across the VNDR Hub prototype.">
+          <div class="state-panel active" data-panel="normal">
+            <div class="tokens">
+              <div class="card">
+                <div class="section-head"><div><h2>Color palette</h2><p>Clean Canadian SaaS, crisp without feeling cold.</p></div></div>
+                <div class="swatches" style="padding:18px">
+                  <div class="swatch"><div class="swatch-color" style="background:#087f7a"></div><div class="swatch-info"><strong>Primary</strong><span>#087F7A</span></div></div>
+                  <div class="swatch"><div class="swatch-color" style="background:#10201f"></div><div class="swatch-info"><strong>Ink</strong><span>#10201F</span></div></div>
+                  <div class="swatch"><div class="swatch-color" style="background:#f7faf9"></div><div class="swatch-info"><strong>Canvas</strong><span>#F7FAF9</span></div></div>
+                  <div class="swatch"><div class="swatch-color" style="background:#168a52"></div><div class="swatch-info"><strong>Success</strong><span>#168A52</span></div></div>
+                  <div class="swatch"><div class="swatch-color" style="background:#b87908"></div><div class="swatch-info"><strong>Warning</strong><span>#B87908</span></div></div>
+                  <div class="swatch"><div class="swatch-color" style="background:#c54135"></div><div class="swatch-info"><strong>Error</strong><span>#C54135</span></div></div>
+                </div>
+              </div>
+              <div class="card typescale">
+                <div class="hxl">VNDR Hub</div>
+                <div class="h2">Multi-vendor POS built for Canadian malls</div>
+                <div class="body">Body text uses a clear system sans-serif. Money and identifiers use a tabular monospace so cents, SKUs, barcodes, tax rates, and settlement math line up cleanly.</div>
+                <div class="money" style="font-size:30px;font-weight:900">$12,834.40 CAD</div>
+              </div>
+              <div class="card pad">
+                <div class="grid-3">
+                  <button class="btn primary">Primary action</button>
+                  <button class="btn">Secondary action</button>
+                  <button class="btn danger">Delete</button>
+                </div>
+                <div class="grid-3" style="margin-top:14px">
+                  <label class="field">Text field<input class="input" value="Prairie Relics"></label>
+                  <label class="field">Dropdown<select><option>British Columbia</option></select></label>
+                  <label class="field">Focused field<input class="input" value="GST 5%"></label>
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+                  <span class="badge success">Active</span>
+                  <span class="badge warning">Pending</span>
+                  <span class="badge info">Paid</span>
+                  <span class="badge danger">Void</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="state-panel" data-panel="loading"></div>
+          <div class="state-panel" data-panel="empty"></div>
+          <div class="state-panel" data-panel="error"></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const titles = {
+      dashboard: ["Operator Dashboard", "Business health, sales, tax, rent, and vendor activity at a glance."],
+      vendors: ["Vendors & Booths", "Browse dealers, assign booths, and inspect commission and rent details."],
+      inventory: ["Inventory & Label Printing", "Vendor inventory management with at-home barcode price tags."],
+      pos: ["POS Terminal", "Fast checkout with vendor grouping, Canadian tax breakdowns, and processor-neutral tendering."],
+      portal: ["Vendor Portal Mobile", "Phone-first live sales view for dealers."],
+      settlements: ["Settlements & Payouts", "Clear vendor statements with gross, commission, rent, fees, and net payout."],
+      onboarding: ["Onboarding Wizard", "Guided setup for a new shop, with Canadian tax and existing Square accounts first."],
+      styleguide: ["Style Guide", "The design tokens used across the VNDR Hub prototype."]
+    };
+
+    const emptyCopy = {
+      dashboard: ["No sales data yet", "Once the first checkout is complete, sales, tax, and vendor activity will appear here."],
+      vendors: ["No vendors yet", "Add your first dealer, then assign them a booth and commission rate."],
+      inventory: ["No inventory yet", "Add products or import a CSV to start printing labels and selling items."],
+      pos: ["Cart is empty", "Scan a barcode or tap a product tile to start a sale."],
+      portal: ["No sales yet today", "New sales will slide into this feed as soon as they happen."],
+      settlements: ["No sales this period", "Choose a period with completed sales to generate a payout statement."],
+      onboarding: ["Setup not started", "Start with shop info, then confirm province tax and payments."],
+      styleguide: ["No components selected", "Use the normal state to inspect the token system."]
+    };
+
+    let currentScreen = "dashboard";
+    let currentState = "normal";
+
+    function quietState(title, text, kind) {
+      const icon = kind === "error"
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6"></path><path d="M12 17h.01"></path></svg>'
+        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 7h16"></path><path d="M6 7v12h12V7"></path><path d="M9 11h6"></path><path d="M9 15h4"></path></svg>';
+      return '<div class="card quiet-state">' + icon + '<div><h3>' + title + '</h3><p>' + text + '</p></div></div>';
+    }
+
+    function loadingState() {
+      let rows = "";
+      for (let i = 0; i < 8; i++) {
+        rows += '<div class="skeleton" style="width:' + (86 - i * 4) + '%"></div>';
+      }
+      return '<div class="card pad" style="display:grid;gap:16px">' + rows + '</div>';
+    }
+
+    function fillGeneratedStates() {
+      document.querySelectorAll(".screen").forEach(screen => {
+        const name = screen.dataset.name;
+        const loading = screen.querySelector('[data-panel="loading"]');
+        const empty = screen.querySelector('[data-panel="empty"]');
+        const error = screen.querySelector('[data-panel="error"]');
+        if (loading) loading.innerHTML = loadingState();
+        if (empty) empty.innerHTML = quietState(emptyCopy[name][0], emptyCopy[name][1], "empty");
+        if (error) error.innerHTML = quietState("Something needs attention", "The design reserves a calm, recoverable error space with a clear retry action.", "error") + '<div style="margin-top:12px"><button class="btn primary">Try again</button></div>';
+      });
+    }
+
+    function setScreen(name) {
+      currentScreen = name;
+      document.querySelectorAll(".screen").forEach(s => s.classList.toggle("active", s.dataset.name === name));
+      document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("active", b.dataset.screen === name));
+      document.getElementById("screen-title").textContent = titles[name][0];
+      document.getElementById("screen-subtitle").textContent = titles[name][1];
+      setState(currentState);
+    }
+
+    function setState(state) {
+      currentState = state;
+      document.querySelectorAll(".state-switcher button").forEach(b => b.classList.toggle("active", b.dataset.state === state));
+      document.querySelectorAll(".screen.active .state-panel").forEach(panel => panel.classList.toggle("active", panel.dataset.panel === state));
+    }
+
+    fillGeneratedStates();
+
+    document.querySelectorAll(".nav button").forEach(button => {
+      button.addEventListener("click", () => setScreen(button.dataset.screen));
+    });
+
+    document.querySelectorAll(".state-switcher button").forEach(button => {
+      button.addEventListener("click", () => setState(button.dataset.state));
+    });
+
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+      const next = document.body.dataset.theme === "dark" ? "light" : "dark";
+      document.body.dataset.theme = next;
+    });
+  </script>
+</body>
+</html>
+
