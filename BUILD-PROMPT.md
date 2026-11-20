@@ -1,0 +1,16 @@
+# VNDR Hub: Codex build instructions
+
+Build VNDR Hub from scratch in this repository. Read requirements.md and screen-plan.md completely. The requirements are the source of truth; the screen plan is a proposed organization. design-prompts.md and designs are visual references only, not approved requirements or an architecture to copy.
+
+VNDR Hub is a browser platform for stores that rent selling space to independent vendors. Staff sell products from multiple vendors at a shared checkout; stores collect payments and pay vendors outside the platform. One vendor account works across participating stores. Follow all detailed requirements, including Canada-first English and French support, role and location access, and isolation of independent businesses and vendors.
+
+Create a milestone plan with acceptance criteria, then implement and verify; do not stop at planning. Prioritize the online workflow: store and vendor setup; vendor product creation and separate stock per store; search and barcode checkout across vendors; cash and manually recorded separate-terminal payments; accurate, durable inventory and transaction history; and one vendor-specific email per affected vendor per transaction subject to preferences. Use safe development email delivery. Enforce authorization on the server.
+
+Continue through the remaining launch requirements in logical milestones. Sequencing does not remove features. Treat payments integrations, offline checkout, financial records, access control and data isolation as real engineering work, not mock screens. Clearly distinguish unfinished functionality and simulations from working operations. If a run ends before the full scope is finished, leave a working state and record the next steps.
+
+Choose a maintainable web stack with a durable relational database, migrations, appropriate money precision, secure authentication and server-side permissions. Design for self-hosting on the owner's Proxmox VM or container and eventual app.vndrhub.ca deployment, with low operating costs. Do not deploy, change DNS, purchase services, create paid accounts, send real email, or process real payments without explicit authorization. Do not commit secrets. Provide example environment configuration and a safe sample-data workflow.
+
+Test important business rules and security boundaries, especially cross-business and cross-vendor isolation, concurrent sales and stock changes, negative inventory, idempotency, vendor-specific notifications, financial calculations and historical terms. Verify builds and relevant tests; fix failures as you go. Support responsive and accessible interfaces. Document decisions that need legal, tax, payment-provider or privacy review without claiming compliance.
+
+Keep a progress document with milestone status, validation, known limitations, decisions and the next steps. Provide a clear README covering setup, local execution, sample data, testing, a complete sale walkthrough, deployment prerequisites, and backup/restore expectations. Make reasonable decisions when requirements are clear; record unresolved choices. Never claim the whole product is complete or production-ready unless the required features are implemented and verified.
+
