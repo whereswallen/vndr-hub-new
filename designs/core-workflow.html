@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VNDR Hub | Core workflow</title>
+<style>
+:root{font-family:Inter,system-ui,-apple-system,sans-serif;color:#202925;background:#f5f6f3;font-size:14px}*{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #9dcbb9;outline-offset:2px}.app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}.side{background:#163c32;color:#e7f1eb;padding:26px 16px;display:flex;flex-direction:column;gap:28px}.brand{font-size:20px;font-weight:800;padding:0 10px;letter-spacing:0}.brand span{color:#add6bc}.store{padding:15px 10px;border-top:1px solid #46655b;border-bottom:1px solid #46655b;font-size:12px;color:#b9cfc3}.store strong{display:block;color:#fff;font-size:14px;margin-bottom:5px}.nav-label{font-size:10px;text-transform:uppercase;font-weight:700;color:#a7c3b4;margin:0 10px 10px}.nav button{display:flex;width:100%;align-items:center;gap:10px;border:0;background:transparent;color:#c9dcd0;padding:11px;border-radius:6px;text-align:left;margin:3px 0}.nav button.active{background:#315c4d;color:#fff;font-weight:650}.side-footer{margin-top:auto;padding:12px 10px;color:#b9cfc3;font-size:12px;line-height:1.5}.main{min-width:0}.top{height:64px;background:#fff;border-bottom:1px solid #e1e6df;display:flex;align-items:center;justify-content:space-between;padding:0 32px;color:#607068}.top strong{color:#27342d}.pill{background:#eef4ee;border:1px solid #dbe8db;color:#356047;padding:6px 10px;border-radius:4px;font-size:12px}.content{max-width:1500px;margin:auto;padding:30px 32px}.heading{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:25px}.heading h1{font-size:26px;line-height:1.2;margin:0 0 7px;letter-spacing:0}.heading p,.muted{color:#718078;margin:0}.button{border:1px solid #d5ddd5;background:#fff;color:#28382e;border-radius:5px;padding:10px 14px;font-weight:650}.button:hover{background:#f3f6f2}.button.primary{background:#276a4e;color:white;border-color:#276a4e}.button.primary:hover{background:#20573f}.button:disabled{opacity:.45;cursor:not-allowed}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}.stat{background:#fff;border:1px solid #e2e7df;border-radius:6px;padding:18px}.stat span{display:block;color:#6d7b72;font-size:12px;margin-bottom:11px}.stat strong{font-size:24px}.stat small{color:#b37432;margin-left:8px}.panel{background:#fff;border:1px solid #e1e7df;border-radius:6px}.panel-head{padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #e9ede7}.panel-head h2{font-size:15px;margin:0}.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.search{border:1px solid #dce3db;background:#fff;border-radius:5px;padding:10px 12px;min-width:210px;color:#26342b}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;text-align:left;white-space:nowrap}th{font-size:11px;text-transform:uppercase;color:#829087;font-weight:650;background:#fafbf9}th,td{padding:14px 20px;border-bottom:1px solid #edf0eb}tr:last-child td{border-bottom:0}td strong{font-weight:650}.sub{display:block;color:#8a968c;font-size:12px;margin-top:4px}.badge{display:inline-block;padding:5px 8px;border-radius:4px;font-size:11px;font-weight:700;background:#e8f3e9;color:#39764d}.badge.low{background:#fff2dc;color:#986422}.badge.out{background:#fae7e2;color:#a34c39}.link{border:0;background:none;color:#287252;font-weight:650;padding:4px}.empty{padding:35px;text-align:center;color:#79877e}.checkout{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:20px;align-items:start}.catalog .panel-head{align-items:flex-start;flex-direction:column}.catalog .toolbar{width:100%}.catalog .search{flex:1}.filters{display:flex;gap:8px;flex-wrap:wrap;padding:16px 20px 0}.chip{border:1px solid #e0e7de;border-radius:4px;background:white;padding:7px 10px;color:#66766b;font-size:12px}.chip.selected{background:#e5f1e9;color:#21613e;border-color:#c7dfce;font-weight:700}.product-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:18px 20px 22px}.product{min-height:125px;border:1px solid #e1e8df;border-radius:5px;background:#fff;text-align:left;padding:14px;display:flex;flex-direction:column;align-items:flex-start;gap:5px}.product:hover{border-color:#6ba888;background:#f7fbf8}.product .cat{font-size:10px;color:#9b7953;text-transform:uppercase;font-weight:750}.product strong{font-size:13px;line-height:1.35}.product .price{margin-top:auto;font-weight:750;color:#285e44}.product small{color:#88958b}.cart{position:sticky;top:15px}.cart-body{padding:0 18px}.cart-line{padding:15px 0;border-bottom:1px solid #edf0eb;display:grid;grid-template-columns:1fr auto;gap:8px}.cart-line strong{font-size:13px}.qty{display:flex;gap:8px;align-items:center;margin-top:8px;color:#586a5c}.qty button{width:25px;height:25px;border:1px solid #dbe3da;background:#fff;border-radius:4px}.totals{padding:18px 0;display:grid;gap:10px;color:#708076}.row{display:flex;justify-content:space-between;gap:12px}.total{font-size:18px;color:#26342a;font-weight:750;border-top:1px solid #e8ece6;padding-top:14px}.pay{padding:0 18px 18px}.pay .button{width:100%;margin-top:10px}.note{font-size:12px;color:#829088;line-height:1.5}.notice{border:1px solid #d7e8da;background:#eff8f0;padding:14px;border-radius:5px;color:#35684a;line-height:1.5}.notice strong{display:block}.history{margin-top:18px}.modal{border:0;border-radius:7px;padding:0;width:min(480px,calc(100% - 32px));box-shadow:0 12px 45px #102e1f3d}.modal::backdrop{background:#15241cb0}.modal-inner{padding:24px}.modal h2{margin:0 0 6px;font-size:19px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}.field{display:grid;gap:6px;font-size:12px;font-weight:650;color:#506157}.field.full{grid-column:1/-1}.field input,.field select{width:100%;border:1px solid #d9e1d8;border-radius:5px;padding:10px}.actions{display:flex;gap:8px;justify-content:flex-end}.toast{position:fixed;bottom:18px;right:18px;background:#183e31;color:#fff;padding:13px 18px;border-radius:5px;max-width:340px;box-shadow:0 6px 25px #12281b33;z-index:3}.hidden{display:none!important}@media(max-width:900px){.app{grid-template-columns:1fr}.side{padding:14px 18px;gap:10px}.brand{font-size:18px}.store,.nav-label,.side-footer{display:none}.nav{display:flex;gap:6px}.nav button{width:auto;margin:0}.top{height:50px;padding:0 18px}.content{padding:22px 18px}.checkout{grid-template-columns:1fr}.cart{position:static}.product-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:550px){.stats{grid-template-columns:1fr 1fr;gap:8px}.stats .stat:last-child{grid-column:span 2}.stat{padding:14px}.heading h1{font-size:23px}.heading{flex-wrap:wrap}.product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.panel-head{align-items:flex-start;flex-direction:column}.toolbar,.search{width:100%}.top .pill{font-size:10px}.fields{grid-template-columns:1fr}.field.full{grid-column:auto}}
+/* Brand direction inspired by the supplied reference, not a final logo. */
+:root{color:#253038;background:#f3f4f5}.side{background:#202a30;color:#f5f6f6}.brand{color:#fff}.brand span{color:#f14c4e}.store{border-color:#485157;color:#b9c1c5}.nav-label{color:#9da9ae}.nav button{color:#d1d7d9}.nav button.active{background:#414b50;color:#fff;box-shadow:inset 3px 0 #e43c3e}.side-footer{color:#aeb9bd}.top{border-color:#e2e5e6}.pill{background:#eef4ef;border-color:#dce7df;color:#48715a}.button.primary{background:#c9252c;border-color:#c9252c}.button.primary:hover{background:#a91e25}.link{color:#b92129}.product:hover{border-color:#ca6265;background:#fffafa}.chip.selected{background:#fbecee;color:#a8252b;border-color:#ebc9cb}.product .price{color:#ad242c}.toast{background:#263238}.notice{border-color:#e4d2d2;background:#fff7f7;color:#653b3d}button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#e89497}
+</style>
+</head>
+<body><div class="app"><aside class="side"><div class="brand">VNDR <span>Hub</span></div><div class="store"><strong>The Local Collective</strong>Kingston, Ontario</div><div><div class="nav-label">Workspace</div><nav class="nav" aria-label="Prototype views"><button id="nav-inventory" class="active" type="button">▦ <span>Inventory</span></button><button id="nav-checkout" type="button">▣ <span>Checkout</span></button></nav></div><div class="side-footer">The Local Collective<br>Sample workspace</div></aside><main class="main"><header class="top"><div><strong>The Local Collective</strong> <span class="muted"> / </span> <span id="crumb">Inventory</span></div><span class="pill">● Online</span></header><div class="content"><section id="inventory-view"><div class="heading"><div><h1>Inventory</h1><p>Manage products and stock at The Local Collective.</p></div><button class="button primary" id="add-product">+ Add product</button></div><div class="stats"><div class="stat"><span>Active products</span><strong id="stat-products">0</strong></div><div class="stat"><span>Units in stock</span><strong id="stat-units">0</strong></div><div class="stat"><span>Needs attention</span><strong id="stat-low">0</strong><small>Low or out of stock</small></div></div><div class="panel"><div class="panel-head"><h2>Products <span class="muted" id="product-count"></span></h2><div class="toolbar"><input id="inventory-search" class="search" placeholder="Search name, SKU or vendor" aria-label="Search inventory"><select id="stock-filter" class="search" aria-label="Filter stock" style="min-width:135px"><option value="all">All stock</option><option value="low">Low stock</option></select></div></div><div class="table-wrap"><table><thead><tr><th>Product</th><th>Vendor / space</th><th>Price</th><th>Stock</th><th>Status</th><th></th></tr></thead><tbody id="inventory-table"></tbody></table></div><div id="inventory-empty" class="empty hidden">No products found.</div></div><p class="note" style="margin-top:16px">Sample workspace · Changes stay in this browser.</p></section><section id="checkout-view" class="hidden"><div class="heading"><div><h1>Checkout</h1><p>New sale <span style="padding:0 6px">·</span> Front counter</p></div><button class="button" id="clear-cart">Clear sale</button></div><div class="checkout"><div class="panel catalog"><div class="panel-head"><h2>Find products</h2><div class="toolbar"><input id="checkout-search" class="search" placeholder="Scan barcode or search products" aria-label="Search checkout products"></div></div><div class="filters" id="category-filters"></div><div class="product-grid" id="product-grid"></div><div class="empty hidden" id="checkout-empty">No matching products.</div></div><div><div class="panel cart"><div class="panel-head"><h2>Current sale <span class="muted" id="cart-count">0 items</span></h2></div><div class="cart-body"><div id="cart-lines"></div><div id="cart-empty" class="empty">Your sale is empty.<br><span class="note">Select a product to add it.</span></div><div class="totals"><div class="row"><span>Subtotal</span><strong id="subtotal">$0.00</strong></div><div class="row"><span>Tax</span><strong id="tax">$0.00</strong></div><div class="row total"><span>Total</span><span id="total">$0.00</span></div></div></div><div class="pay"><button class="button primary" id="pay-button" disabled>Take payment</button><p class="note">Cash or separate card terminal</p></div></div><div id="last-sale" class="history hidden"></div></div></div></section></div></main></div>
+<dialog class="modal" id="product-modal"><form class="modal-inner" id="product-form"><h2 id="product-form-title">Add product</h2><p class="muted">Product details for this store.</p><div class="fields"><label class="field full">Product name<input name="name" required maxlength="70"></label><label class="field">SKU<input name="sku" required maxlength="30"></label><label class="field">Barcode<input name="barcode" maxlength="40"></label><label class="field">Vendor<input name="vendor" required maxlength="50"></label><label class="field">Space<input name="space" required maxlength="25"></label><label class="field">Category<input name="category" required maxlength="30"></label><label class="field">Price (CAD)<input name="price" type="number" min="0" step="0.01" required></label><label class="field">Stock quantity<input name="stock" type="number" step="1" required></label><label class="field">Low stock at<input name="threshold" type="number" min="0" step="1" required></label><label class="field full"><span><input name="taxable" type="checkbox" style="width:auto"> Taxable</span></label></div><div class="actions"><button class="button" type="button" data-close="product-modal">Cancel</button><button class="button primary" type="submit">Save product</button></div></form></dialog>
+<dialog class="modal" id="payment-modal"><form class="modal-inner" id="payment-form"><h2>Complete sale</h2><p class="muted">Total due: <strong id="payment-total"></strong></p><div class="fields"><label class="field full">Payment method<select name="method"><option>Cash</option><option>Separate card terminal</option></select></label><label class="field full">Customer email for receipt (optional)<input name="email" type="email" placeholder="customer@example.com"></label></div><p class="note">Sample transaction only. No payment is processed and no email is sent.</p><div class="actions"><button class="button" type="button" data-close="payment-modal">Cancel</button><button class="button primary" type="submit">Complete sample sale</button></div></form></dialog><div id="toast" class="toast hidden" role="status"></div>
+<script>
+const initial=[{id:1,name:'Lavender Soy Candle',sku:'WL-101',barcode:'100001',vendor:'Wildflower Co.',space:'A12',category:'Home',price:24,stock:12,threshold:3,taxable:false},{id:2,name:'Oat Milk Soap',sku:'WL-102',barcode:'100002',vendor:'Wildflower Co.',space:'A12',category:'Bath & body',price:9,stock:3,threshold:3,taxable:false},{id:3,name:'Speckled Ceramic Mug',sku:'CL-204',barcode:'100003',vendor:'Clay & Co.',space:'B04',category:'Home',price:32,stock:5,threshold:2,taxable:false},{id:4,name:'Maple Leaf Print',sku:'NP-011',barcode:'100004',vendor:'North Paper',space:'C08',category:'Art & paper',price:18,stock:8,threshold:2,taxable:false},{id:5,name:'Botanical Greeting Card',sku:'NP-014',barcode:'100005',vendor:'North Paper',space:'C08',category:'Art & paper',price:6,stock:14,threshold:3,taxable:false},{id:6,name:'Linen Tea Towel',sku:'MT-021',barcode:'100006',vendor:'Meadow Textiles',space:'A06',category:'Home',price:22,stock:2,threshold:3,taxable:false}];
+let products;try{products=JSON.parse(localStorage.getItem('vndr-core-products'))||initial}catch{products=initial}let cart=[],category='All',editing=null;const $=id=>document.getElementById(id),money=n=>new Intl.NumberFormat('en-CA',{style:'currency',currency:'CAD'}).format(n),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));function save(){localStorage.setItem('vndr-core-products',JSON.stringify(products))}function notify(s){$('toast').textContent=s;$('toast').classList.remove('hidden');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>$('toast').classList.add('hidden'),3000)}function changeView(view){for(const name of ['inventory','checkout']){$(name+'-view').classList.toggle('hidden',name!==view);$('nav-'+name).classList.toggle('active',name===view)}$('crumb').textContent=view==='inventory'?'Inventory':'Checkout';render()}$('nav-inventory').onclick=()=>changeView('inventory');$('nav-checkout').onclick=()=>changeView('checkout');function render(){renderInventory();renderCheckout()}function renderInventory(){let query=$('inventory-search').value.toLowerCase();let found=products.filter(p=>[p.name,p.sku,p.vendor,p.barcode].some(x=>x.toLowerCase().includes(query))&&($('stock-filter').value==='all'||p.stock<=p.threshold));$('stat-products').textContent=products.length;$('stat-units').textContent=products.reduce((n,p)=>n+p.stock,0);$('stat-low').textContent=products.filter(p=>p.stock<=p.threshold).length;$('product-count').textContent='('+found.length+')';$('inventory-table').innerHTML=found.map(p=>`<tr><td><strong>${esc(p.name)}</strong><span class="sub">${esc(p.sku)}</span></td><td>${esc(p.vendor)}<span class="sub">Space ${esc(p.space)}</span></td><td>${money(p.price)}</td><td><strong>${p.stock}</strong> units</td><td><span class="badge ${p.stock<=0?'out':p.stock<=p.threshold?'low':''}">${p.stock<=0?'Out of stock':p.stock<=p.threshold?'Low stock':'In stock'}</span></td><td><button class="link" data-edit="${p.id}">Edit</button></td></tr>`).join('');$('inventory-empty').classList.toggle('hidden',found.length>0)}function renderCheckout(){const cats=['All',...new Set(products.map(p=>p.category))];if(!cats.includes(category))category='All';$('category-filters').innerHTML=cats.map(c=>`<button class="chip ${c===category?'selected':''}" data-category="${esc(c)}">${esc(c)}</button>`).join('');let q=$('checkout-search').value.toLowerCase();let found=products.filter(p=>(category==='All'||p.category===category)&&[p.name,p.sku,p.barcode,p.vendor].some(x=>x.toLowerCase().includes(q)));$('product-grid').innerHTML=found.map(p=>`<button class="product" data-add="${p.id}"><span class="cat">${esc(p.category)}</span><strong>${esc(p.name)}</strong><small>${esc(p.vendor)} · ${esc(p.space)}</small><span class="price">${money(p.price)}</span></button>`).join('');$('checkout-empty').classList.toggle('hidden',found.length>0);const count=cart.reduce((n,c)=>n+c.qty,0);$('cart-count').textContent=count+' '+(count===1?'item':'items');$('cart-empty').classList.toggle('hidden',cart.length>0);$('cart-lines').innerHTML=cart.map(c=>{let p=products.find(x=>x.id===c.id);return `<div class="cart-line"><div><strong>${esc(p.name)}</strong><span class="sub">${esc(p.vendor)} · ${esc(p.space)}</span><div class="qty"><button aria-label="Remove one ${esc(p.name)}" data-minus="${p.id}">−</button><span>${c.qty}</span><button aria-label="Add one ${esc(p.name)}" data-plus="${p.id}">+</button><span>× ${money(p.price)}</span></div></div><strong>${money(p.price*c.qty)}</strong></div>`}).join('');let subtotal=cart.reduce((n,c)=>n+products.find(p=>p.id===c.id).price*c.qty,0),tax=cart.reduce((n,c)=>{let p=products.find(p=>p.id===c.id);return n+(p.taxable?Math.round(p.price*c.qty*0.13*100)/100:0)},0);$('subtotal').textContent=money(subtotal);$('tax').textContent=money(tax);$('total').textContent=money(subtotal+tax);$('pay-button').disabled=!cart.length}function openProduct(id){editing=id;let p=products.find(x=>x.id===id),f=$('product-form');f.reset();$('product-form-title').textContent=p?'Edit product':'Add product';if(p)for(const key of ['name','sku','barcode','vendor','space','category','price','stock','threshold'])f.elements[key].value=p[key];else{f.elements.threshold.value=3;f.elements.stock.value=0}f.elements.taxable.checked=!!p?.taxable;$('product-modal').showModal()}$('add-product').onclick=()=>openProduct(null);document.addEventListener('click',e=>{let b=e.target.closest('button');if(!b)return;if(b.dataset.close)$(b.dataset.close).close();if(b.dataset.edit)openProduct(Number(b.dataset.edit));if(b.dataset.category){category=b.dataset.category;renderCheckout()}if(b.dataset.add||b.dataset.plus){let id=Number(b.dataset.add||b.dataset.plus),c=cart.find(x=>x.id===id);c?c.qty++:cart.push({id,qty:1});renderCheckout()}if(b.dataset.minus){let c=cart.find(x=>x.id===Number(b.dataset.minus));if(--c.qty===0)cart=cart.filter(x=>x!==c);renderCheckout()}});$('product-form').onsubmit=e=>{e.preventDefault();let f=e.target,sku=f.elements.sku.value.trim(),barcode=f.elements.barcode.value.trim();if(products.some(p=>p.id!==editing&&(p.sku.toLowerCase()===sku.toLowerCase()||(barcode&&p.barcode.toLowerCase()===barcode.toLowerCase())))){notify('That SKU or barcode is already in use.');return}let obj={id:editing||Date.now(),name:f.elements.name.value.trim(),sku,barcode,vendor:f.elements.vendor.value.trim(),space:f.elements.space.value.trim(),category:f.elements.category.value.trim(),price:Number(f.elements.price.value),stock:Number(f.elements.stock.value),threshold:Number(f.elements.threshold.value),taxable:f.elements.taxable.checked};if(editing)products=products.map(p=>p.id===editing?obj:p);else products.push(obj);save();$('product-modal').close();render();notify('Product saved.')};$('inventory-search').oninput=renderInventory;$('stock-filter').onchange=renderInventory;$('checkout-search').oninput=renderCheckout;$('checkout-search').onkeydown=e=>{if(e.key==='Enter'){let q=e.target.value.trim().toLowerCase(),p=products.find(x=>x.barcode&&x.barcode.toLowerCase()===q);if(p){let c=cart.find(x=>x.id===p.id);c?c.qty++:cart.push({id:p.id,qty:1});e.target.value='';renderCheckout();notify('Added '+p.name)}else notify('Barcode not found. Search by name or SKU.')}};$('clear-cart').onclick=()=>{cart=[];renderCheckout()};$('pay-button').onclick=()=>{$('payment-total').textContent=$('total').textContent;$('payment-modal').showModal()};$('payment-form').onsubmit=e=>{e.preventDefault();let groups={};cart.forEach(c=>{let p=products.find(x=>x.id===c.id);p.stock-=c.qty;(groups[p.vendor]??=[]).push(`${c.qty} × ${p.name}`)});save();let details=Object.entries(groups).map(([vendor,items])=>`<div style="margin-top:10px"><strong>${esc(vendor)}</strong><span>${esc(items.join(', '))}</span></div>`).join('');$('last-sale').innerHTML=`<div class="notice"><strong>Sample sale completed</strong>Inventory updated. Notification preview:<br>${details}<p class="note">One combined email per vendor. No emails sent.</p></div>`;$('last-sale').classList.remove('hidden');cart=[];$('payment-modal').close();e.target.reset();render();notify('Sample sale completed.')};render();
+</script>
+<script>
+// The prototype uses one sample vendor and one assigned space for new products.
+const productForm = document.getElementById('product-form');
+const originalProductSubmit = productForm.onsubmit;
+const originalOpenProduct = openProduct;
+productForm.elements.sku.required = false;
+productForm.elements.sku.placeholder = 'Leave blank to generate';
+const addAnother = document.createElement('button');
+addAnother.type = 'submit';
+addAnother.className = 'button';
+addAnother.textContent = 'Save and add another';
+productForm.querySelector('.actions').insertBefore(addAnother, productForm.querySelector('.actions .primary'));
+openProduct = function(id) {
+  originalOpenProduct(id);
+  const isNew = id === null;
+  for (const field of ['vendor', 'space']) productForm.elements[field].closest('label').hidden = isNew;
+  if (isNew) {
+    productForm.elements.vendor.value = 'Wildflower Co.';
+    productForm.elements.space.value = 'A12';
+  }
+};
+productForm.onsubmit = function(event) {
+  const addNext = event.submitter === addAnother;
+  if (!this.elements.sku.value.trim()) {
+    let candidate;
+    do { candidate = 'AUTO-' + Math.random().toString(36).slice(2, 8).toUpperCase(); }
+    while (products.some(p => p.sku.toUpperCase() === candidate));
+    this.elements.sku.value = candidate;
+  }
+  originalProductSubmit.call(this, event);
+  if (addNext && !document.getElementById('product-modal').open) openProduct(null);
+};
+</script>
+<script>
+// Local-only checkout interaction demo; manual items do not create inventory records.
+const checkoutSearch = document.getElementById('checkout-search');
+const sampleVendors = [
+  { name: 'Wildflower Co.', spaces: ['A12'] },
+  { name: 'Clay & Co.', spaces: ['B04'] },
+  { name: 'North Paper', spaces: ['C08'] },
+  { name: 'Meadow Textiles', spaces: ['A06'] }
+];
+let scanSounds = true;
+const soundToggle = document.createElement('label');
+soundToggle.className = 'note';
+soundToggle.innerHTML = '<input type="checkbox" checked> Scan sounds';
+document.querySelector('#checkout-view .heading').append(soundToggle);
+soundToggle.querySelector('input').addEventListener('change', event => { scanSounds = event.target.checked; });
+function scanTone(success) {
+  if (!scanSounds) return;
+  try {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+    const context = new AudioContextClass();
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+    oscillator.frequency.value = success ? 820 : 260;
+    gain.gain.setValueAtTime(0.05, context.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.14);
+    oscillator.connect(gain); gain.connect(context.destination);
+    oscillator.start(); oscillator.stop(context.currentTime + 0.14);
+    oscillator.onended = () => context.close();
+  } catch (_) { /* Visual feedback remains available if audio is blocked. */ }
+}
+const manualDialog = document.createElement('dialog');
+manualDialog.className = 'modal';
+manualDialog.innerHTML = `<form class="modal-inner" id="manual-form"><h2>Unrecognized item</h2><p class="muted">Enter the item details to add it to this sale.</p><div class="fields"><label class="field full">Barcode<input name="barcode" required></label><label class="field full">Vendor<select name="vendor" required><option value="">Select a vendor</option>${sampleVendors.map(v => `<option>${esc(v.name)}</option>`).join('')}</select></label><label class="field">Space<select name="space" required><option value="">Select a vendor first</option></select></label><label class="field">Quantity<input name="quantity" type="number" min="1" step="1" value="1" required></label><label class="field full">Product name<input name="name" required maxlength="70"></label><label class="field">Price (CAD)<input name="price" type="number" min="0" step="0.01" required></label></div><p class="note">Sample only. This item is not added to inventory or sent by email.</p><div class="actions"><button class="button" type="button" id="manual-cancel">Cancel</button><button class="button primary" type="submit">Add to sale</button></div></form>`;
+document.body.append(manualDialog);
+const manualForm = document.getElementById('manual-form');
+manualForm.elements.vendor.addEventListener('change', () => {
+  const vendor = sampleVendors.find(v => v.name === manualForm.elements.vendor.value);
+  manualForm.elements.space.innerHTML = vendor ? vendor.spaces.map(s => `<option>${esc(s)}</option>`).join('') : '<option value="">Select a vendor first</option>';
+});
+document.getElementById('manual-cancel').onclick = () => { manualDialog.close(); checkoutSearch.focus(); };
+const scanError = document.createElement('div');
+scanError.className = 'notice hidden';
+scanError.style.margin = '14px 20px 0';
+scanError.innerHTML = '<strong>Barcode not found</strong><span>Check the code or add this item manually.</span> <button type="button" class="link" id="manual-open">Enter item</button>';
+document.querySelector('.catalog .panel-head').after(scanError);
+let unknownBarcode = '';
+document.getElementById('manual-open').onclick = () => {
+  manualForm.reset();
+  manualForm.elements.space.innerHTML = '<option value="">Select a vendor first</option>';
+  manualForm.elements.barcode.value = unknownBarcode;
+  manualDialog.showModal();
+};
+const previousRenderInventory = renderInventory;
+renderInventory = function() {
+  const allProducts = products;
+  products = products.filter(p => !p.manual);
+  previousRenderInventory();
+  products = allProducts;
+};
+const previousRenderCheckout = renderCheckout;
+renderCheckout = function() {
+  previousRenderCheckout();
+  document.querySelectorAll('#product-grid [data-add]').forEach(button => {
+    const p = products.find(item => item.id === Number(button.dataset.add));
+    if (p && p.manual) button.remove();
+  });
+  document.querySelectorAll('#cart-lines [data-minus]').forEach(button => {
+    const item = products.find(p => p.id === Number(button.dataset.minus));
+    const line = button.closest('.cart-line');
+    if (item && item.manual) {
+      const label = document.createElement('span'); label.className = 'sub'; label.textContent = 'Manual item · unmatched'; line.firstElementChild.append(label);
+      const edit = document.createElement('button'); edit.className = 'link'; edit.type = 'button'; edit.textContent = 'Edit';
+      edit.onclick = () => {
+        manualForm.reset();
+        manualForm.elements.barcode.value = item.barcode;
+        manualForm.elements.vendor.value = item.vendor;
+        manualForm.elements.vendor.dispatchEvent(new Event('change'));
+        manualForm.elements.space.value = item.space;
+        manualForm.elements.name.value = item.name;
+        manualForm.elements.price.value = item.price;
+        manualForm.elements.quantity.value = cart.find(c => c.id === item.id).qty;
+        manualForm.dataset.editId = item.id;
+        manualDialog.showModal();
+      };
+      line.firstElementChild.append(edit);
+    } else if (item && item.stock <= 0) {
+      const warning = document.createElement('span'); warning.className = 'sub'; warning.style.color = '#a34c39'; warning.textContent = 'Stock is zero or negative'; line.firstElementChild.append(warning);
+    }
+  });
+};
+manualForm.onsubmit = event => {
+  event.preventDefault();
+  const editId = Number(manualForm.dataset.editId || 0);
+  let item = products.find(p => p.id === editId && p.manual);
+  if (!item) {
+    item = { id: Date.now(), manual: true, sku: '', category: 'Manual', stock: 0, threshold: 0, taxable: false };
+    products.push(item);
+    cart.unshift({ id: item.id, qty: 1 });
+  }
+  Object.assign(item, { name: manualForm.elements.name.value.trim(), barcode: manualForm.elements.barcode.value.trim(), vendor: manualForm.elements.vendor.value, space: manualForm.elements.space.value, price: Number(manualForm.elements.price.value) });
+  cart.find(c => c.id === item.id).qty = Number(manualForm.elements.quantity.value);
+  delete manualForm.dataset.editId;
+  manualDialog.close(); scanError.classList.add('hidden'); checkoutSearch.value = ''; renderCheckout(); checkoutSearch.focus();
+};
+manualDialog.addEventListener('close', () => { delete manualForm.dataset.editId; });
+checkoutSearch.onkeydown = event => {
+  if (event.key !== 'Enter') return;
+  event.preventDefault();
+  const code = checkoutSearch.value.trim();
+  if (!code) return;
+  const product = products.find(p => !p.manual && p.barcode && p.barcode.toLowerCase() === code.toLowerCase());
+  if (!product) {
+    unknownBarcode = code; scanError.classList.remove('hidden'); scanTone(false); return;
+  }
+  scanError.classList.add('hidden');
+  let entry = cart.find(c => c.id === product.id);
+  if (entry) { entry.qty++; cart = cart.filter(c => c !== entry); }
+  else entry = { id: product.id, qty: 1 };
+  cart.unshift(entry); checkoutSearch.value = ''; renderCheckout(); scanTone(true);
+  const line = document.querySelector('#cart-lines .cart-line');
+  if (line) { line.style.background = '#fff0f0'; setTimeout(() => { line.style.background = ''; }, 900); }
+};
+const previousPaymentSubmit = document.getElementById('payment-form').onsubmit;
+document.getElementById('payment-form').onsubmit = function(event) {
+  previousPaymentSubmit.call(this, event);
+  products = products.filter(p => !p.manual);
+  save(); render();
+};
+const previousClear = document.getElementById('clear-cart').onclick;
+document.getElementById('clear-cart').onclick = function(event) {
+  previousClear.call(this, event);
+  products = products.filter(p => !p.manual); renderCheckout();
+};
+render();
+</script></body></html>
+
